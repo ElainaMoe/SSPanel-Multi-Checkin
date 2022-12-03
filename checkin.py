@@ -32,6 +32,12 @@ pwd = pwd_list.split("\n")
 
 
 def checkin(url, email, password):
+    print(f'正在对 {url} 进行连接测试……')
+    try:
+        requests.get(url)
+    except requests.exceptions.ConnectionError as e:
+        print(f'对 {url} 的链接测试失败，请检查该链接是否可以正常访问：{e}')
+        return
     print(f'开始对 {url} 进行签到……')
     email = email.split('@')
     email = email[0] + '%40' + email[1]
@@ -61,7 +67,12 @@ def checkin(url, email, password):
 
     response = session.post(url + '/user/checkin',
                             headers=headers, verify=False)
-    print(response.text)
+    if response.status_code == 200:
+        print(str(response.text))
+    elif response.status_code >= 400 and response.status_code < 500:
+        print(f'签到发生错误，返回状态码为 {response.status_code} ，返回体为{response.text}')
+    elif response.status_code > 500:
+        print(f'签到发生错误，返回状态码为 {response.status_code} ，貌似机场出了点问题？返回体为{response.text}')
 
 
 datas = []
