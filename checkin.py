@@ -3,35 +3,46 @@ import os
 import time
 requests.packages.urllib3.disable_warnings()
 
-
-# 初始化环境变量开头
-base_url = os.environ["websites"]
-user_list = os.environ["user_list"]
-pswd_list = os.environ["pwd_list"]
-# 初始化环境变量结尾
-
-if(base_url == "" or user_list == "" or pswd_list == ""):
-    print("发生异常，一个或多个环境变量无法读取，请检查您Fork的仓库的secret设定")
-    exit()
+if os.path.exists('site') and os.path.exists('users') and os.path.exists('pwd'):
+    print('检测到当前目录下存在配置文件，正在读取……')
+    site_file, user_file, pwd_file = open('site'), open('users'), open('pwd')
+    base_url = site_file.read()
+    user_list = user_file.read()
+    pwd_list = pwd_file.read()
+    site_file.close()
+    user_file.close()
+    pwd_file.close()
+    if(base_url == "" or user_list == "" or pwd_list == ""):
+        print("配置文件未填写完全，请重试！")
+        exit()
+else:
+    base_url = os.environ["websites"]
+    user_list = os.environ["user_list"]
+    pwd_list = os.environ["pwd_list"]
+    if(base_url == "" or user_list == "" or pwd_list == ""):
+        print("发生异常，一个或多个环境变量无法读取，请检查您Fork的仓库的secret设定")
+        exit()
 
 
 # 分割账号密码开头
 website = base_url.split('\n')
 user = user_list.split("\n")
-pwd = pswd_list.split("\n")
+pwd = pwd_list.split("\n")
 # 分割账号密码结尾
 
 
 def checkin(url, email, password):
-
+    print(f'开始对 {url} 进行签到……')
     email = email.split('@')
     email = email[0] + '%40' + email[1]
 
     session = requests.session()
 
-    session.get(url, verify=False)
+    res = session.get(url, verify=False)
+    # print(res.text)
     time.sleep(10)  # 防止某些站带有DDOS保护验证
-    session.get(url, verify=False)
+    res = session.get(url, verify=False)
+    # print(res.text)
     login_url = url + '/auth/login'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4209.0 Safari/537.36',
