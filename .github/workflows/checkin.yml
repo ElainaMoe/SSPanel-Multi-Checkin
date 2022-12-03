@@ -31,6 +31,6 @@ jobs:
       env:
         websites: ${{ secrets.SITE }} 
         user_list: ${{ secrets.USERS }} 
-        pswd_list: ${{ secrets.PWD }} 
+        pwd_list: ${{ secrets.PWD }} 
       run: |
         python3 checkin.py
