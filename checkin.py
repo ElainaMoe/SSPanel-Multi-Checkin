@@ -1,6 +1,7 @@
 import requests
 import os
 import time
+import json
 requests.packages.urllib3.disable_warnings()
 
 if os.path.exists('site') and os.path.exists('users') and os.path.exists('pwd'):
@@ -68,7 +69,11 @@ def checkin(url, email, password):
     response = session.post(url + '/user/checkin',
                             headers=headers, verify=False)
     if response.status_code == 200:
-        print(str(response.text))
+        try:
+            print(json.loads(response.text)['msg']])
+        except Exception as e:
+            print(f'[ERROR] Critical error when parsing, {e}')
+            print(str(response.text))
     elif response.status_code >= 400 and response.status_code < 500:
         print(f'签到发生错误，返回状态码为 {response.status_code} ，返回体为{response.text}')
     elif response.status_code > 500:
