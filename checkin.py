@@ -70,7 +70,7 @@ def checkin(url, email, password):
                             headers=headers, verify=False)
     if response.status_code == 200:
         try:
-            print(json.loads(response.text)['msg']])
+            print(json.loads(response.text)['msg'])
         except Exception as e:
             print(f'[ERROR] Critical error when parsing, {e}')
             print(str(response.text))
